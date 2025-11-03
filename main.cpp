@@ -8,6 +8,7 @@
 /*
  * Handle command line error
  */
+
 struct CommandLineException
 {
    CommandLineException()
