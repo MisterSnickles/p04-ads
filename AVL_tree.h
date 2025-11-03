@@ -192,9 +192,14 @@ Post: sub_root is reset to point to its former left child, and the former
 */
 {
    // TODO 1
-
-   
-
+   if (sub_root == NULL || sub_root->left == NULL)     //  impossible cases
+      cout << "WARNING: program error detected in rotate_right" << endl;
+   else {
+      Binary_node<Record> *left_tree = sub_root->left;
+      sub_root->left = left_tree->right;
+      left_tree->right = sub_root;
+      sub_root = left_tree;
+   }
 }
 
 template <class Record>
@@ -206,9 +211,6 @@ Post: The AVL properties have been restored to the subtree.
 */
 {
    // TODO 2
-   
-
-
 }
 
 template <class Record>
@@ -216,11 +218,7 @@ Error_code AVL_tree<Record>::avl_delete(Binary_node<Record>* &sub_root,
            const Record &target, bool &shorter)
 {
    Error_code result = success;
-   
    // TODO 3
-
-
-
 
    return result;
 }
