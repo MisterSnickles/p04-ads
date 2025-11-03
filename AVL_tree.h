@@ -209,8 +209,54 @@ Pre:  sub_root points to a subtree of an AVL_tree that
       is doubly unbalanced on the left.
 Post: The AVL properties have been restored to the subtree.   
 */
-{
-   // TODO 2
+{  // TODO 2
+   Binary_node<Record>* &left_tree = sub_root->left;
+
+   switch (left_tree->get_balance()) {
+   // case left_higher: sigle right rotation
+   // O  ub --> subroot
+   //  \
+   //   O  rh  --> right_tree
+   //    \
+   //     O
+   case left_higher:  //  single right rotation
+      sub_root->set_balance(equal_height);
+      left_tree->set_balance(equal_height);
+      rotate_right(sub_root); //pointer adjustment
+      break;
+   case equal_height:  //  impossible case
+      cout << "WARNING: If you see this in an insertion, program error is detected in left_balance" << endl;
+      break;
+   // case right_higher: double rotation right
+   // O ub --> sub_root
+   //  \
+   //   O lh --> right_tree
+   //  /
+   // O three cases --> sub_tree
+   case right_higher:                           
+      Binary_node<Record> *sub_tree = left_tree->right;
+	  //set balance of sub_root and left_tree assuming rotation is done
+      switch (sub_tree->get_balance()) {
+      case equal_height:
+         sub_root->set_balance(equal_height);
+         left_tree->set_balance(equal_height);
+         break;
+      case right_higher:
+         sub_root->set_balance(equal_height);
+         left_tree->set_balance(left_higher);
+         break;
+      case left_higher:
+         sub_root->set_balance(right_higher);
+         left_tree->set_balance(equal_height);
+         break;
+      }
+	  //set balance of sub_tree after rotation
+      sub_tree->set_balance(equal_height);
+	  //perform actual rotation
+      rotate_left(left_tree);
+      rotate_right(sub_root);
+      break;
+   }
 }
 
 template <class Record>
@@ -219,6 +265,39 @@ Error_code AVL_tree<Record>::avl_delete(Binary_node<Record>* &sub_root,
 {
    Error_code result = success;
    // TODO 3
-
+   //base it off of search_and_delete in Search_tree.h. 
+   //for each recursive delte, make a correction whether is balanced or not.
+   //when delete node, check balance.
+   if (sub_root == NULL)
+      return not_present;
+   else if (sub_root->data == target) {
+      if (sub_root->right == NULL) { // No right child
+         Binary_node<Record> *to_delete = sub_root;  //  Remember node to delete at end.
+         sub_root = sub_root->left;
+         delete to_delete;
+         to_delete = nullptr;
+      } else if (sub_root->left == NULL) { // No left child
+         Binary_node<Record> *to_delete = sub_root;  //  Remember node to delete at end.
+         sub_root = sub_root->right;
+         delete to_delete;
+         to_delete = nullptr;
+      } else { // subroot has two children
+         // search for the immediate predecessor 
+         Binary_node<Record> *predecessor_node = sub_root->left; 
+         while (predecessor_node->right != NULL) { 
+            predecessor_node = predecessor_node->right;
+         }
+         // replace the target with the immediate predecessor
+         sub_root->data = predecessor_node->data;  
+         // delete the redundant immediate predecessor
+         avl_delete(sub_root->left, sub_root->data, shorter);
+      }
+   } else if (target < sub_root->data){
+      return avl_delete(sub_root->left, target, shorter);
+      right_balance(sub_root);
+   }  else {
+      return avl_delete(sub_root->right, target, shorter);
+      left_balance(sub_root);
+   }
    return result;
 }
