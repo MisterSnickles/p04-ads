@@ -24,7 +24,11 @@ To run the program (choosing 1 the 2 given files):
 
 The expected output:
 ++++++++++++++++++++++
+
 92: 90 95
+
 90: 70 -
+
 95: 93 110
+
 ++++++++++++++++++++++
