@@ -23,6 +23,7 @@ To run the program (choosing 1 the 2 given files):
 `./p04.exe input2.dat`
 
 The expected output:
+
 ++++++++++++++++++++++
 
 92: 90 95
